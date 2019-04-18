@@ -12,15 +12,25 @@ const io = socketIO(server);
 
 app.use(express.static(publicPath));
 
-io.on('connection', (socket)=>{
+io.on('connection', (socket) => {
   console.log('New user connected');
-  
-    socket.on('disconnect',()=>{
-      console.log('User was disconnected');
-    });
+
+  socket.emit('newMessage', {
+    from: 'test',
+    text: 'tada',
+    createdAt: 123
+  });
+
+  socket.on('createMessage', (message)=>{
+    console.log('createMessage', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User was disconnected');
+  });
 });
 
 
-server.listen(port, ()=>{
+server.listen(port, () => {
   console.log(`Server is runing on port ${port}`);
 });
