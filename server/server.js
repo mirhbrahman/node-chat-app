@@ -15,21 +15,38 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.on('createMessage', (message)=>{
+  socket.emit('newMessage', {
+    form: 'Admin',
+    text: 'Welcome to chat app',
+    createdAt: new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage', {
+    form: 'Admin',
+    text: 'New user join',
+    createdAt: new Date().getTime()
+  });
+
+  socket.on('createMessage', (message) => {
     console.log('createMessage', message);
     io.emit('newMessage',{
       from: message.from,
       text: message.text,
       createAt: new Date().getTime()
     });
+    // socket.broadcast.emit('newMessage', {
+    //   from: message.from,
+    //   text: message.text,
+    //   createAt: new Date().getTime()
+    // });
   });
 
-  socket.on('disconnect', () => {
-    console.log('User was disconnected');
+    socket.on('disconnect', () => {
+      console.log('User was disconnected');
+    });
   });
-});
 
 
-server.listen(port, () => {
-  console.log(`Server is runing on port ${port}`);
-});
+  server.listen(port, () => {
+    console.log(`Server is runing on port ${port}`);
+  });
